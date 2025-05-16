@@ -20,6 +20,8 @@ CONFIG = {
     # Configuration emails
     "BASE_EMAIL": "genie-{}@lenylvt.cc",
     "REFERENCE_EMAIL": "leny.levant95@icloud.com",  # Email de référence pour vérifier la position
+    "START_EMAIL": 40,  # Numéro de départ pour les emails
+    "STOP_EMAIL": 50,   # Numéro de fin pour les emails
     
     # URLs
     "SIGNUP_URL": "https://api.getwaitlist.com/api/v1/signup",
@@ -328,13 +330,18 @@ def signup(email, ai):
         return {"is_spam": True, "error": str(e)}
 
 # ======= FONCTION PRINCIPALE =======
-def run_waitlist_loop(start=1, stop=5, min_delay=10, max_delay=20):
+def run_waitlist_loop():
     """Fonction principale qui exécute la boucle d'inscription"""
     # Forcer la création du dossier data
     DATA_FOLDER.mkdir(exist_ok=True, parents=True)
     logger.info(f"Vérification du dossier data: {DATA_FOLDER.exists()}")
     
-    ai = WaitlistAI(initial_min_delay=min_delay, initial_max_delay=max_delay)
+    # Récupérer les valeurs depuis la configuration
+    start = CONFIG["START_EMAIL"]
+    stop = CONFIG["STOP_EMAIL"]
+    
+    # Initialiser l'IA avec des valeurs par défaut (l'IA s'adaptera d'elle-même)
+    ai = WaitlistAI(initial_min_delay=5, initial_max_delay=10)
     logger.info(f"🚀 Démarrage du processus pour {stop-start+1} emails ({start}-{stop})")
     
     # Vérifier l'état initial de référence
@@ -425,7 +432,7 @@ if __name__ == "__main__":
     os.makedirs(CONFIG["DATA_FOLDER"], exist_ok=True)
     
     # Exécuter la boucle principale
-    run_waitlist_loop(start=28, stop=40, min_delay=5, max_delay=10)
+    run_waitlist_loop()
     
     # Vérifier que le fichier JSON a été créé
     json_file = os.path.join(CONFIG["DATA_FOLDER"], CONFIG["DATA_FILENAME"])
